@@ -284,13 +284,12 @@ int patchEC(std::string &ec)
 	
 	return 0;
 }
-
-int main()
+int main(int argc, char ** argv)
 {
 	std::string bios;
 
 {
-	FILE *f = fopen("BIOSIMG.bin", "rb");
+	FILE *f = fopen(argv[1], "rb");
 	fseek(f, 0, SEEK_END);
 	bios.resize(ftell(f));
 	fseek(f, 0, SEEK_SET);
@@ -308,7 +307,7 @@ int main()
 
 	memcpy(bios.data(), ec1.data(), ec1.size());
 	memcpy(&bios.data()[0x40000], ec2.data(), ec2.size());
-	
+
 	size_t offset = FindPattern(bios, "24 42 56 44 54 24", 22);
 	if (offset == std::string::npos)
 	{
@@ -330,7 +329,7 @@ int main()
 	memcpy(&bios[offset2-1], " DeckHD", 7);
 
 {
-	FILE *f = fopen("BIOSIMG_DeckHD_EC.bin", "wb");
+	FILE *f = fopen(argv[2], "wb");
 	fwrite(bios.data(), 1, bios.size(), f);
 	fclose(f);
 }
